@@ -1,4 +1,4 @@
-FROM lsiobase/alpine.armhf
+FROM lsiobase/alpine.armhf:3.5
 MAINTAINER sparklyballs
 
 # set version label
@@ -6,14 +6,14 @@ ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
-# environment variables
+# environment variables
 ENV HOME="/config" \
 MINETEST_SUBGAME_PATH="/config/.minetest/games
 
 # build variables
 ARG LDFLAGS="-lintl"
 
-# install build packages
+# install build packages
 RUN \
  apk add --no-cache --virtual=build-dependencies \
 	bzip2-dev \
@@ -29,12 +29,15 @@ RUN \
 	icu-dev \
 	irrlicht-dev \
 	libjpeg-turbo-dev \
+	libogg-dev \
 	libpng-dev \
+	libressl-dev \
 	libtool \
+	libvorbis-dev \
 	luajit-dev \
 	make \
+	mesa-dev \
 	openal-soft-dev \
-	openssl-dev \
 	python-dev \
 	sqlite-dev && \
 
@@ -42,7 +45,7 @@ apk add --no-cache --virtual=build-dependencies \
 	--repository http://nl.alpinelinux.org/alpine/edge/testing \
 	leveldb-dev && \
 
-# install runtime packages
+# install runtime packages
  apk add --no-cache \
 	curl \
 	gmp \
@@ -59,7 +62,7 @@ apk add --no-cache \
 	--repository http://nl.alpinelinux.org/alpine/edge/testing \
 	leveldb && \
 
-# compile spatialindex
+# compile spatialindex
  git clone https://github.com/libspatialindex/libspatialindex /tmp/spatialindex && \
  cd /tmp/spatialindex && \
  cmake . \
@@ -67,7 +70,7 @@ apk add --no-cache \
  make && \
  make install && \
 
-# compile minetestserver
+# compile minetestserver
  git clone --depth 1 https://github.com/minetest/minetest.git /tmp/minetest && \
  cp /tmp/minetest//minetest.conf.example /defaults/minetest.conf && \
  cd /tmp/minetest && \
@@ -79,7 +82,6 @@ apk add --no-cache \
 	-DCUSTOM_DOCDIR="/usr/share/doc/minetest" \
 	-DCUSTOM_SHAREDIR="/usr/share/minetest" \
 	-DENABLE_CURL=1 \
-	-DENABLE_GETTEXT=1 \
 	-DENABLE_LEVELDB=1 \
 	-DENABLE_LUAJIT=1 \
 	-DENABLE_REDIS=1 \
@@ -97,15 +99,15 @@ apk add --no-cache \
 # fetch additional game from git
  git clone --depth 1 https://github.com/minetest/minetest_game.git /defaults/games/minetest && \
 
-# cleanup
+# cleanup
  apk del --purge \
 	build-dependencies && \
  rm -rf \
 	/tmp/*
 
-# add local files
+# add local files
 COPY root /
 
-# ports and volumes
+# ports and volumes
 EXPOSE 30000/udp
 VOLUME /config/.minetest
