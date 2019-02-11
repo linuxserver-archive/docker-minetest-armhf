@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+
+echo '
+******************************************************
+******************************************************
+*                                                    *
+*                                                    *
+*          This image has been deprecated            *
+*                                                    *
+*           Use the multi-arch images at             *
+*                                                    *
+*               linuxserver/minetest                 *
+*                                                    *
+*    https://hub.docker.com/r/linuxserver/minetest   *
+*                                                    *
+*   https://github.com/linuxserver/docker-minetest   *
+*                                                    *
+*                                                    *
+*                                                    *
+******************************************************
+******************************************************'
